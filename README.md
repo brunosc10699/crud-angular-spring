@@ -1,1 +1,1 @@
-# CRUD Angular and Spring Boot
+# Angular CRUD and Spring Boot
