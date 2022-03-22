@@ -7,4 +7,6 @@ import org.springframework.data.domain.Pageable;
 public interface CourseService {
 
     Page<CourseDTO> findAll(Pageable pageable);
+
+    CourseDTO findById(Long id);
 }
