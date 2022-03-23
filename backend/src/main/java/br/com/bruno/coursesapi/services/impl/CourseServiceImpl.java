@@ -18,13 +18,21 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Page<CourseDTO> findAll(Pageable pageable) {
-        return courseRepository.findAll(pageable).map(CourseDTO::toDTO);
+        return courseRepository.findAll(pageable).map(this::toDTO);
     }
 
     @Override
     public CourseDTO findById(Long id) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found by id: " + id));
-        return CourseDTO.toDTO(course);
+        return this.toDTO(course);
+    }
+
+    private CourseDTO toDTO(Course course) {
+        return CourseDTO.builder()
+                .id(course.getId())
+                .name(course.getName())
+                .category(course.getCategory())
+                .build();
     }
 }

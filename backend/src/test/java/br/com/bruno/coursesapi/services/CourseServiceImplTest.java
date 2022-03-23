@@ -1,6 +1,7 @@
 package br.com.bruno.coursesapi.services;
 
 import br.com.bruno.coursesapi.dto.CourseDTO;
+import br.com.bruno.coursesapi.dto.NewCourseDTO;
 import br.com.bruno.coursesapi.entities.Course;
 import br.com.bruno.coursesapi.repositories.CourseRepository;
 import br.com.bruno.coursesapi.services.exceptions.ResourceNotFoundException;
@@ -41,12 +42,23 @@ public class CourseServiceImplTest {
             .category("Backend Development")
             .build();
 
+    private final NewCourseDTO newCourseDTO = NewCourseDTO.builder()
+            .name("Java")
+            .category("Backend Development")
+            .build();
+
+    private final CourseDTO courseDTO = CourseDTO.builder()
+            .id(1L)
+            .name("Java")
+            .category("Backend Development")
+            .build();
+
     private final Page<Course> page = new PageImpl<>(Collections.singletonList(course));
 
     private final PageRequest pageRequest = PageRequest.of(0, 1);
 
     @Test
-    @DisplayName("(1) Should return a page of Course elements")
+    @DisplayName("(1) Must return a page of Course elements")
     void whenFindAllIsCalledThenReturnAPageOfCourses() {
         when(courseRepository.findAll(pageRequest)).thenReturn(page);
 
@@ -54,14 +66,14 @@ public class CourseServiceImplTest {
         assertAll(
                 () -> assertThat(pageDTO.getTotalPages(), is(equalTo(1))),
                 () -> assertThat(pageDTO.getSize(), is(equalTo(1))),
-                () -> assertThat(pageDTO.getContent().get(0).getId(), is(equalTo(1L))),
-                () -> assertThat(pageDTO.getContent().get(0).getName(), is(equalTo("Java"))),
-                () -> assertThat(pageDTO.getContent().get(0).getCategory(), is(equalTo("Backend Development")))
+                () -> assertThat(pageDTO.getContent().get(0).getId(), is(equalTo(course.getId()))),
+                () -> assertThat(pageDTO.getContent().get(0).getName(), is(equalTo(course.getName()))),
+                () -> assertThat(pageDTO.getContent().get(0).getCategory(), is(equalTo(course.getCategory())))
         );
     }
 
     @Test
-    @DisplayName("(2) Should return an empty elements page")
+    @DisplayName("(2) Must return an empty elements page")
     void whenFindAllIsCalledThenReturnAnEmptyPage() {
         when(courseRepository.findAll(pageRequest)).thenReturn(Page.empty());
 
@@ -71,21 +83,21 @@ public class CourseServiceImplTest {
     }
 
     @Test
-    @DisplayName("(3) Should return a course DTO object")
+    @DisplayName("(3) Must return a course DTO object")
     void whenFindByIdIsCalledThenReturnADTOObject() {
-        when(courseRepository.findById(course.getId())).thenReturn(Optional.of(course));
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
 
-        CourseDTO courseDTO = courseService.findById(1L);
+        CourseDTO newCourseDTO = courseService.findById(1L);
 
         assertAll(
-                () -> assertThat(courseDTO.getId(), is(equalTo(course.getId()))),
-                () -> assertThat(courseDTO.getName(), is(equalTo(course.getName()))),
-                () -> assertThat(courseDTO.getCategory(), is(equalTo(course.getCategory())))
+                () -> assertThat(newCourseDTO.getId(), is(equalTo(course.getId()))),
+                () -> assertThat(newCourseDTO.getName(), is(equalTo(course.getName()))),
+                () -> assertThat(newCourseDTO.getCategory(), is(equalTo(course.getCategory())))
         );
     }
 
     @Test
-    @DisplayName("(4) Should throw a ResourceNotFoundException exception when looking for a non-existent course")
+    @DisplayName("(4) Must throw a ResourceNotFoundException exception when looking for a non-existent course")
     void whenFindByIdIsCalledThenThrowAException() {
         when(courseRepository.findById(course.getId())).thenReturn(Optional.empty());
 
