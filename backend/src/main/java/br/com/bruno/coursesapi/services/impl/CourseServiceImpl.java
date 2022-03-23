@@ -28,6 +28,13 @@ public class CourseServiceImpl implements CourseService {
         return this.toDTO(course);
     }
 
+    @Override
+    public CourseDTO findByName(String name) {
+        Course course = courseRepository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found by name: " + name));
+        return this.toDTO(course);
+    }
+
     private CourseDTO toDTO(Course course) {
         return CourseDTO.builder()
                 .id(course.getId())

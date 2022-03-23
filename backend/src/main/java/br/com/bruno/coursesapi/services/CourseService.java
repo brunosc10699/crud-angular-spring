@@ -9,4 +9,6 @@ public interface CourseService {
     Page<CourseDTO> findAll(Pageable pageable);
 
     CourseDTO findById(Long id);
+
+    CourseDTO findByName(String name);
 }

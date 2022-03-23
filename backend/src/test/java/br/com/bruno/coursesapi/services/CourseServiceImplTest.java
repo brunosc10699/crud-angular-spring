@@ -25,6 +25,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -102,5 +103,27 @@ public class CourseServiceImplTest {
         when(courseRepository.findById(course.getId())).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> courseService.findById(course.getId()));
+    }
+
+    @Test
+    @DisplayName("(5) Must return the DTO object of a course by its 'name' property")
+    void whenFindByNameIsCalledThenReturnACourse() {
+        when(courseRepository.findByName("Java")).thenReturn(Optional.of(course));
+
+        CourseDTO researchedCourse = courseService.findByName("Java");
+
+        assertAll(
+                () -> assertThat(researchedCourse.getId(), is(equalTo(course.getId()))),
+                () -> assertThat(researchedCourse.getName(), is(equalTo(course.getName()))),
+                () -> assertThat(researchedCourse.getCategory(), is(equalTo(course.getCategory())))
+        );
+    }
+
+    @Test
+    @DisplayName("(6) Must throw a ResourceNotFoundException exception when looking for a non-existent course by name")
+    void whenFindByNameIsCalledThenThrowAnException() {
+        when(courseRepository.findByName("Delphi")).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> courseService.findByName("Delphi"));
     }
 }
